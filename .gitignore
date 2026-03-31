@@ -1,0 +1,50 @@
+# DIA-NN container image
+diann/diann-2.0.2.img
+
+# Runtime outputs
+scripts/Library/
+scripts/Reports/
+scripts/Peptidomics_Results/
+scripts/log/
+scripts/diann_search_job.sh
+scripts/peptide.fasta
+scripts/non_canonical_peptide_headers.txt
+scripts/db_seq.txt
+scripts/tmp_query.tsv
+scripts/_chunk_*
+
+# Results (if using run.sh --output)
+results/
+
+# Session / progress notes
+pipeline_run_context_*.md
+progress_*.md
+
+# R
+.Rhistory
+.Rdata
+.RData
+.Rproj.user/
+Rplots.pdf
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude
+.claude/
+
+# Conda
+environment.yml.lock

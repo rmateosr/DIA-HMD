@@ -1,0 +1,12 @@
+name: diann-pipeline
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - r-base=4.4
+  - pandas=2.2
+  - pyarrow=17.0
+  - r-tidyverse=2.0
+  - r-rcolorbrewer=1.1
+  - r-data.table=1.16

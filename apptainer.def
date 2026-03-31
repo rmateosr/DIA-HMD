@@ -1,0 +1,45 @@
+Bootstrap: docker
+From: rocker/r-ver:4.4.3
+
+%labels
+    Author Raul N. Mateos
+    Version 2.0.0
+    Description DIANN paper pipeline — proteogenomic hotspot peptide detection
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+        python3-venv \
+        libcurl4-openssl-dev \
+        libxml2-dev \
+        libssl-dev \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libpng-dev \
+        libtiff5-dev \
+        libjpeg-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+    pip3 install --no-cache-dir --break-system-packages \
+        pandas==2.2.* \
+        pyarrow==17.*
+
+    Rscript -e 'install.packages(c("tidyverse", "RColorBrewer", "data.table"), repos="https://cloud.r-project.org", quiet=TRUE)'
+
+%environment
+    export PATH=/opt/pipeline:$PATH
+
+%runscript
+    exec bash /opt/pipeline/run.sh "$@"
+
+%help
+    DIANN paper pipeline: DIA-NN proteogenomic pipeline for detecting somatic
+    mutation (hotspot) peptides from DIA mass spectrometry data.
+
+    This container provides R and Python dependencies. DIA-NN itself is NOT
+    included — provide your own DIA-NN Apptainer image or native binary.
+
+    Usage:
+        apptainer run pipeline.sif --input /path/to/raw --diann /path/to/diann.img
+        apptainer run pipeline.sif --help

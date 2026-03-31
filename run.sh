@@ -1,0 +1,138 @@
+#!/bin/bash
+# ABOUTME: CLI entry point for the DIANN paper pipeline.
+# ABOUTME: Validates inputs, writes config, and runs the full pipeline.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+usage() {
+    cat <<EOF
+DIANN Paper Pipeline — Somatic mutation (hotspot) peptide detection from DIA-MS data
+
+Usage: $(basename "$0") [OPTIONS]
+
+Required:
+  --input DIR         Path to directory containing *.raw.dia files
+  --diann PATH        DIA-NN Apptainer image, Docker image name, or native binary path
+
+Optional:
+  --output DIR        Copy final results here (default: results/ in repo root)
+  --fasta FILE        Custom FASTA file (default: bundled data/fasta/proteome.fasta)
+  --proteome FILE     Canonical proteome FASTA (default: bundled data/fasta/human_canonical_proteome.fasta)
+  --runtime RT        Container runtime for DIA-NN: apptainer, docker, native, auto (default: auto)
+  --threads N         Number of threads for DIA-NN (default: 4)
+  --help              Show this help message
+
+Examples:
+  # Local machine with Docker
+  $(basename "$0") --input /data/raw_files --diann biocontainers/diann:2.0.2 --runtime docker --threads 8
+
+  # HPC with Apptainer image
+  $(basename "$0") --input /data/raw_files --diann /apps/diann-2.0.2.img --threads 32
+
+  # Native DIA-NN binary (no container)
+  $(basename "$0") --input /data/raw_files --diann /usr/local/bin/diann-linux --runtime native
+EOF
+    exit "${1:-0}"
+}
+
+# ---- Parse arguments ----
+INPUT_DIR=""
+DIANN_PATH=""
+OUTPUT_DIR="$SCRIPT_DIR/results"
+FASTA="$SCRIPT_DIR/data/fasta/proteome.fasta"
+PROTEOME="$SCRIPT_DIR/data/fasta/human_canonical_proteome.fasta"
+RUNTIME=""
+THREADS=4
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --input)    INPUT_DIR="$2"; shift 2 ;;
+        --diann)    DIANN_PATH="$2"; shift 2 ;;
+        --output)   OUTPUT_DIR="$2"; shift 2 ;;
+        --fasta)    FASTA="$2"; shift 2 ;;
+        --proteome) PROTEOME="$2"; shift 2 ;;
+        --runtime)  RUNTIME="$2"; shift 2 ;;
+        --threads)  THREADS="$2"; shift 2 ;;
+        --help|-h)  usage 0 ;;
+        *)          echo "ERROR: Unknown option '$1'" >&2; usage 1 ;;
+    esac
+done
+
+# ---- Validate required arguments ----
+if [[ -z "$INPUT_DIR" ]]; then
+    echo "ERROR: --input is required" >&2
+    usage 1
+fi
+if [[ -z "$DIANN_PATH" ]]; then
+    echo "ERROR: --diann is required" >&2
+    usage 1
+fi
+if [[ ! -d "$INPUT_DIR" ]]; then
+    echo "ERROR: Input directory does not exist: $INPUT_DIR" >&2
+    exit 1
+fi
+if [[ ! -f "$FASTA" ]]; then
+    echo "ERROR: FASTA file not found: $FASTA" >&2
+    exit 1
+fi
+if [[ ! -f "$PROTEOME" ]]; then
+    echo "ERROR: Canonical proteome file not found: $PROTEOME" >&2
+    exit 1
+fi
+
+# Check that input directory has .raw.dia files
+shopt -s nullglob
+RAW_FILES=("$INPUT_DIR"/*.raw.dia)
+shopt -u nullglob
+if [[ ${#RAW_FILES[@]} -eq 0 ]]; then
+    echo "ERROR: No *.raw.dia files found in $INPUT_DIR" >&2
+    exit 1
+fi
+echo "Found ${#RAW_FILES[@]} .raw.dia file(s) in $INPUT_DIR"
+
+# ---- Write config ----
+# Resolve to absolute paths
+INPUT_DIR="$(cd "$INPUT_DIR" && pwd)"
+FASTA="$(cd "$(dirname "$FASTA")" && pwd)/$(basename "$FASTA")"
+PROTEOME="$(cd "$(dirname "$PROTEOME")" && pwd)/$(basename "$PROTEOME")"
+
+CONFIG="$SCRIPT_DIR/scripts/config.sh"
+# Back up original config
+cp "$CONFIG" "${CONFIG}.bak"
+
+# Patch config.sh with user-provided values using sed
+sed -i \
+    -e "s|^SAMPLE_DIR=.*|SAMPLE_DIR=\"$INPUT_DIR\"|" \
+    -e "s|^FASTA_FILE=.*|FASTA_FILE=\"$FASTA\"|" \
+    -e "s|^DIANN_IMG=.*|DIANN_IMG=\"$DIANN_PATH\"|" \
+    -e "s|^PROTEOME_FILE=.*|PROTEOME_FILE=\"$PROTEOME\"|" \
+    -e "s|^CONTAINER_RUNTIME=.*|CONTAINER_RUNTIME=\"$RUNTIME\"|" \
+    -e "s|^DIANN_THREADS=.*|DIANN_THREADS=$THREADS|" \
+    "$CONFIG"
+
+echo ""
+echo "=== Configuration ==="
+echo "  Input:     $INPUT_DIR (${#RAW_FILES[@]} files)"
+echo "  DIA-NN:    $DIANN_PATH"
+echo "  FASTA:     $FASTA"
+echo "  Proteome:  $PROTEOME"
+echo "  Runtime:   ${RUNTIME:-auto}"
+echo "  Threads:   $THREADS"
+echo ""
+
+# ---- Run pipeline ----
+cd "$SCRIPT_DIR/scripts"
+bash Complete_pipeline.sh
+
+# ---- Copy results ----
+if [[ -d "Peptidomics_Results" ]]; then
+    mkdir -p "$OUTPUT_DIR"
+    cp -r Peptidomics_Results/* "$OUTPUT_DIR/"
+    echo ""
+    echo "=== Results copied to $OUTPUT_DIR ==="
+    ls -lh "$OUTPUT_DIR/"
+fi
+
+# Restore original config
+mv "${CONFIG}.bak" "$CONFIG"
