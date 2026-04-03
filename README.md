@@ -247,10 +247,6 @@ All outputs are written to `results/` (or the directory specified with `--output
 | data.table | >= 1.14 | Fast file reading (R) |
 | Apptainer or Docker | any | Container runtime for DIA-NN (optional if using native binary) |
 
-## Gene Fusion Analysis
-
-A version of this pipeline that includes gene-fusion peptide detection is preserved in the [`with-fusions`](https://github.com/rmateosr/DIA-HMD/tree/with-fusions) branch (tag: `v1.0-with-fusions`).
-
 ## Citation
 
 If you use this pipeline, please cite:
