@@ -1,5 +1,9 @@
-# DIA-NN container image
-diann/diann-2.0.2.img
+# DIA-NN container image (downloaded from GitHub Release)
+*.img
+*.sif
+
+# Example DIA-MS data (downloaded from Zenodo)
+example/*.raw.dia
 
 # Runtime outputs
 scripts/Library/

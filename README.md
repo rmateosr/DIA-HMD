@@ -6,17 +6,29 @@ DIA-NN based proteogenomic pipeline for detecting **somatic mutation (hotspot) p
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/rmateosr/DIANN_pipeline.git
-cd DIANN_pipeline
+git clone https://github.com/rmateosr/DIA-HMD.git
+cd DIA-HMD
 
 # 2. Install dependencies (pick one)
 conda env create -f environment.yml && conda activate diann-pipeline
 # OR: bash install_deps.sh
 
-# 3. Run the pipeline
+# 3. Download external files (not included in the repo due to size)
+
+# DIA-NN 2.0.2 Apptainer image (321 MB) — from the GitHub Release
+gh release download v1.0 --pattern 'diann-2.0.2.img' --dir .
+# Or download manually from the Releases page:
+#   https://github.com/rmateosr/DIA-HMD/releases/tag/v1.0
+
+# Example DIA-MS data (13 GB) — from Zenodo
+wget -O example/24f201_DIA_NCI_06_COLO205.raw.dia \
+  "https://zenodo.org/records/19393774/files/24f201_DIA_NCI_06_COLO205.raw.dia"
+# Or download manually from: https://doi.org/10.5281/zenodo.19393774
+
+# 4. Run the pipeline
 bash run.sh \
-  --input /path/to/your/raw_dia_files \
-  --diann /path/to/diann-2.0.2.img \
+  --input example/ \
+  --diann diann-2.0.2.img \
   --threads 4
 ```
 
@@ -83,9 +95,19 @@ This pipeline requires [DIA-NN 2.0.2](https://github.com/vdemichev/DiaNN). You n
 
 | Method | Best for | How to get |
 |--------|----------|------------|
-| **Apptainer image** | HPC clusters | Build from DIA-NN releases or pull from a registry |
+| **Apptainer image (recommended)** | HPC clusters | Download from [this repo's GitHub Release](https://github.com/rmateosr/DIA-HMD/releases/tag/v1.0), or build from the bundled `apptainer.def` |
 | **Docker image** | Local machines | `docker pull biocontainers/diann:2.0.2` (check availability) |
 | **Native binary** | Any Linux | Download from [DIA-NN releases](https://github.com/vdemichev/DiaNN/releases) |
+
+To download the pre-built Apptainer image from the release:
+
+```bash
+# Using GitHub CLI
+gh release download v1.0 --pattern 'diann-2.0.2.img' --dir .
+
+# Or build from the definition file
+apptainer build diann-2.0.2.img apptainer.def
+```
 
 ## Usage
 
@@ -167,6 +189,23 @@ No manual editing of scheduler directives is needed. On a local machine without 
 
 Directory of `*.raw.dia` DIA mass spectrometry files. All files in the directory are included in the search.
 
+### Example data
+
+An example DIA-MS file (`24f201_DIA_NCI_06_COLO205.raw.dia`, 13 GB) is available from Zenodo:
+
+> **DOI:** [10.5281/zenodo.19393774](https://doi.org/10.5281/zenodo.19393774)
+
+```bash
+# Download into the example/ directory
+wget -O example/24f201_DIA_NCI_06_COLO205.raw.dia \
+  "https://zenodo.org/records/19393774/files/24f201_DIA_NCI_06_COLO205.raw.dia"
+
+# Run the pipeline on it
+bash run.sh --input example/ --diann diann-2.0.2.img --threads 4
+```
+
+See [`example/README.md`](example/README.md) for details.
+
 ## Output
 
 All outputs are written to `results/` (or the directory specified with `--output`):
@@ -210,7 +249,7 @@ All outputs are written to `results/` (or the directory specified with `--output
 
 ## Gene Fusion Analysis
 
-A version of this pipeline that includes gene-fusion peptide detection is preserved in the [`with-fusions`](https://github.com/rmateosr/DIANN_pipeline/tree/with-fusions) branch (tag: `v1.0-with-fusions`).
+A version of this pipeline that includes gene-fusion peptide detection is preserved in the [`with-fusions`](https://github.com/rmateosr/DIA-HMD/tree/with-fusions) branch (tag: `v1.0-with-fusions`).
 
 ## Citation
 
