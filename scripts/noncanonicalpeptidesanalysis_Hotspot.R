@@ -36,7 +36,7 @@ for(cont in 1: length(lengths)){
 }
 
 
-outputDIANN =data.frame(fread("Reports/report_peptidoforms.pr_matrix.tsv", fill=TRUE), check.names=FALSE)
+outputDIANN =data.frame(fread("Reports/report_peptidoforms.pr_matrix.strict.tsv", fill=TRUE), check.names=FALSE)
 
 numericones  =grep("raw.dia", colnames(outputDIANN))
 numericoutputDIANN = outputDIANN[,numericones]
@@ -105,6 +105,8 @@ noncanonicalpeptides = normalizednumericoutputDIANN_selection$Stripped.Sequence
 sequencesmatching_samelength_canonical_SNV = c()
 Genenames_sequencesmatching_samelength_canonical_SNV = c()
 for(cont in 1:length(noncanonicalpeptides)){
+  THERef <- NULL
+  THElocation <- NULL
   thismut = str_split_fixed( normalizednumericoutputDIANN_selection$Genes[cont], "_",3)
   Ref = substring(thismut[2],1,1)
   Alt = substring(thismut[3],1,1)
@@ -114,17 +116,21 @@ for(cont in 1:length(noncanonicalpeptides)){
     mutatedAaremoved = substring(noncanonicalpeptides[cont], 1, (nchar(noncanonicalpeptides[cont])-1))
     locationofpotentialnonmut = grep(mutatedAaremoved, normalizednumericoutputDIANN$Stripped.Sequence)
     potentialnonmut = normalizednumericoutputDIANN$Stripped.Sequence[locationofpotentialnonmut]
-    for(npotentialnonmut in 1:length(potentialnonmut)){
-      Refpept = str_split(potentialnonmut[npotentialnonmut], "")[[1]]
-      Mutpept = str_split(mutatedAaremoved, "")[[1]]
-      option1 = Mutpept == Refpept[1: length(Mutpept)]
-      if((sum(option1)== length(option1)) &  (Refpept[length(Mutpept) + 1] == Ref)){
-        THERef= potentialnonmut[npotentialnonmut]
-        THElocation = locationofpotentialnonmut[npotentialnonmut]
+    if(length(potentialnonmut) > 0){
+      for(npotentialnonmut in 1:length(potentialnonmut)){
+        Refpept = str_split(potentialnonmut[npotentialnonmut], "")[[1]]
+        Mutpept = str_split(mutatedAaremoved, "")[[1]]
+        option1 = Mutpept == Refpept[1: length(Mutpept)]
+        if((sum(option1)== length(option1)) &  (Refpept[length(Mutpept) + 1] == Ref)){
+          THERef= potentialnonmut[npotentialnonmut]
+          THElocation = locationofpotentialnonmut[npotentialnonmut]
+        }
+      }
+      if(!is.null(THERef)){
+        sequencesmatching_samelength_canonical_SNV = c(sequencesmatching_samelength_canonical_SNV, THERef)
+        Genenames_sequencesmatching_samelength_canonical_SNV = c(Genenames_sequencesmatching_samelength_canonical_SNV, normalizednumericoutputDIANN$Genes[THElocation])
       }
     }
-    sequencesmatching_samelength_canonical_SNV = c(sequencesmatching_samelength_canonical_SNV, THERef)
-    Genenames_sequencesmatching_samelength_canonical_SNV = c(Genenames_sequencesmatching_samelength_canonical_SNV, normalizednumericoutputDIANN$Genes[THElocation])
 
   } else if ((Ref == "R" | Ref == "K" )& str_locate_all(noncanonicalpeptides[cont], "[KR]")[[1]][,1][1] == nchar(noncanonicalpeptides[cont])  ){
     # Branch B
@@ -294,6 +300,8 @@ pdf("Peptidomics_Results/hotspot_by_mutation.pdf", width = 10, height = 15)
 noncanonLabel = as.character(unique(noncanonandcanon$Label[noncanonandcanon$Canon == FALSE]))
 
 for(cont in 1:length(noncanonLabel)){
+  THERef <- NULL
+  THElocation <- NULL
   noncanonandcanon$Canon = factor(noncanonandcanon$Canon, c("TRUE", "FALSE"))
   thisselection = noncanonandcanon[agrep(noncanonLabel[cont],noncanonandcanon$Label),]
   the_sequence = (str_split_fixed(thisselection$Label, "_", 4)[,4])[1]
@@ -309,16 +317,22 @@ for(cont in 1:length(noncanonLabel)){
     mutatedAaremoved = substring(the_sequence, 1, (nchar(the_sequence)-1))
     locationofpotentialnonmut = grep(mutatedAaremoved, noncanonandcanon$Sequence)
     potentialnonmut = noncanonandcanon$Sequence[locationofpotentialnonmut]
-    for(npotentialnonmut in 1:length(potentialnonmut)){
-      Refpept = str_split(potentialnonmut[npotentialnonmut], "")[[1]]
-      Mutpept = str_split(mutatedAaremoved, "")[[1]]
-      option1 = Mutpept == Refpept[1: length(Mutpept)]
-      if((sum(option1)== length(option1)) &  (Refpept[length(Mutpept) + 1] == Ref)){
-        THERef= potentialnonmut[npotentialnonmut]
-        THElocation = locationofpotentialnonmut[npotentialnonmut]
+    if(length(potentialnonmut) > 0){
+      for(npotentialnonmut in 1:length(potentialnonmut)){
+        Refpept = str_split(potentialnonmut[npotentialnonmut], "")[[1]]
+        Mutpept = str_split(mutatedAaremoved, "")[[1]]
+        option1 = Mutpept == Refpept[1: length(Mutpept)]
+        if((sum(option1)== length(option1)) &  (Refpept[length(Mutpept) + 1] == Ref)){
+          THERef= potentialnonmut[npotentialnonmut]
+          THElocation = locationofpotentialnonmut[npotentialnonmut]
+        }
       }
     }
-    thecanon = noncanonandcanon[grep(THERef, noncanonandcanon$Sequence),]
+    if(!is.null(THERef)){
+      thecanon = noncanonandcanon[grep(THERef, noncanonandcanon$Sequence),]
+    } else {
+      thecanon = noncanonandcanon[0,]
+    }
 
   } else if (Ref == "R" | Ref == "K" ){
     # Branch B
@@ -327,17 +341,23 @@ for(cont in 1:length(noncanonLabel)){
     locationofpotentialnonmut = grep(longestfragment, noncanonandcanon$Sequence)
     potentialnonmut = noncanonandcanon$Sequence[locationofpotentialnonmut]
 
-    for(npotentialnonmut in 1:length(potentialnonmut)){
-      Refpept = str_split(potentialnonmut[npotentialnonmut], "")[[1]]
-      Mutpept = str_split(the_sequence, "")[[1]]
-      option1 = Mutpept[1:(length(Refpept)-1)] == Refpept[1:length(Refpept)-1]
-      option2 = Mutpept[(length(Mutpept) - length(Refpept) + 1):length(Mutpept)] == Refpept
-      if(sum(option1)  == length(option1) | sum(option2)  == length(option2)){
-        THERef= potentialnonmut[npotentialnonmut]
-        THElocation = locationofpotentialnonmut[npotentialnonmut]
+    if(length(potentialnonmut) > 0){
+      for(npotentialnonmut in 1:length(potentialnonmut)){
+        Refpept = str_split(potentialnonmut[npotentialnonmut], "")[[1]]
+        Mutpept = str_split(the_sequence, "")[[1]]
+        option1 = Mutpept[1:(length(Refpept)-1)] == Refpept[1:length(Refpept)-1]
+        option2 = Mutpept[(length(Mutpept) - length(Refpept) + 1):length(Mutpept)] == Refpept
+        if(sum(option1)  == length(option1) | sum(option2)  == length(option2)){
+          THERef= potentialnonmut[npotentialnonmut]
+          THElocation = locationofpotentialnonmut[npotentialnonmut]
+        }
       }
     }
-    thecanon = noncanonandcanon[grep(THERef, noncanonandcanon$Sequence),]
+    if(!is.null(THERef)){
+      thecanon = noncanonandcanon[grep(THERef, noncanonandcanon$Sequence),]
+    } else {
+      thecanon = noncanonandcanon[0,]
+    }
 
   } else {
     # Branch C
