@@ -16,7 +16,7 @@ PROTEOME_FILE="../data/fasta/human_canonical_proteome.fasta"  # bundled with thi
 CONTAINER_RUNTIME=""
 
 # ---- DIA-NN threads (used by generate_diann_job.sh) ----
-DIANN_THREADS=4  # increase if you have more cores available
+DIANN_THREADS=8  # increase if you have more cores available
 
 # ---- Module system (leave empty if tools are already on PATH) ----
 MODULE_BASE=""  # e.g., "/usr/local/package/modulefiles/"
