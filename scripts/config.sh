@@ -20,6 +20,7 @@ DIANN_THREADS=4  # increase if you have more cores available
 
 # ---- Module system (leave empty if tools are already on PATH) ----
 MODULE_BASE=""  # e.g., "/usr/local/package/modulefiles/"
+APPTAINER_BIN=""  # resolved at run.sh time; overridden by config.run.sh
 
 # Override defaults with values written by run.sh (keeps this template untouched)
 _config_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -48,18 +49,26 @@ ensure_tool() {
 run_container() {
   local runtime="${CONTAINER_RUNTIME:-auto}"
   if [[ "$runtime" == "auto" ]]; then
-    # Try to load apptainer via module system before falling back
-    if ! command -v apptainer &>/dev/null && ! command -v singularity &>/dev/null; then
-      ensure_tool apptainer "apptainer" 2>/dev/null || true
-    fi
     if command -v apptainer &>/dev/null; then runtime="apptainer"
     elif command -v singularity &>/dev/null; then runtime="apptainer"
     elif command -v docker &>/dev/null; then runtime="docker"
     else runtime="native"; fi
   fi
+  local apptainer_cmd="${APPTAINER_BIN:-}"
+  if [[ -z "$apptainer_cmd" ]]; then
+    apptainer_cmd="$(command -v apptainer 2>/dev/null || command -v singularity 2>/dev/null || true)"
+  fi
+  if [[ "$runtime" == "apptainer" && -z "$apptainer_cmd" ]]; then
+    echo "ERROR: apptainer/singularity not found. Run run.sh from a node where apptainer is on PATH." >&2
+    exit 1
+  fi
   case "$runtime" in
     apptainer)
-      apptainer exec "$DIANN_IMG" "$@"
+      "$apptainer_cmd" exec \
+        --bind "$SAMPLE_DIR" \
+        --bind "$(dirname "$FASTA_FILE")" \
+        --bind "$PWD" \
+        "$DIANN_IMG" "$@"
       ;;
     docker)
       docker run --rm \

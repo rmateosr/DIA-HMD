@@ -101,11 +101,25 @@ if [[ -e "$DIANN_PATH" ]]; then
     DIANN_PATH="$(cd "$(dirname "$DIANN_PATH")" && pwd)/$(basename "$DIANN_PATH")"
 fi
 
-# Auto-detect MODULE_BASE from current environment (for scheduler jobs)
-DETECTED_MODULE_BASE=""
-if type module &>/dev/null; then
-    if [[ -n "${MODULEPATH:-}" ]]; then
-        DETECTED_MODULE_BASE="${MODULEPATH%%:*}"
+# Resolve the container runtime and apptainer binary path now (on the login node,
+# where the user has their environment set up) so scheduler jobs can use the
+# absolute path directly — no dependency on module system layout or names.
+APPTAINER_BIN=""
+if [[ -z "$RUNTIME" || "$RUNTIME" == "auto" ]]; then
+    if command -v apptainer &>/dev/null; then
+        RUNTIME="apptainer"
+        APPTAINER_BIN="$(command -v apptainer)"
+    elif command -v singularity &>/dev/null; then
+        RUNTIME="apptainer"
+        APPTAINER_BIN="$(command -v singularity)"
+    elif command -v docker &>/dev/null; then
+        RUNTIME="docker"
+    else
+        RUNTIME="native"
+    fi
+else
+    if [[ "$RUNTIME" == "apptainer" ]]; then
+        APPTAINER_BIN="$(command -v apptainer 2>/dev/null || command -v singularity 2>/dev/null || true)"
     fi
 fi
 
@@ -120,7 +134,7 @@ DIANN_IMG="$DIANN_PATH"
 PROTEOME_FILE="$PROTEOME"
 CONTAINER_RUNTIME="$RUNTIME"
 DIANN_THREADS=$THREADS
-MODULE_BASE="${DETECTED_MODULE_BASE}"
+APPTAINER_BIN="${APPTAINER_BIN}"
 RUNEOF
 
 echo ""
