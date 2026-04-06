@@ -21,6 +21,12 @@ DIANN_THREADS=4  # increase if you have more cores available
 # ---- Module system (leave empty if tools are already on PATH) ----
 MODULE_BASE=""  # e.g., "/usr/local/package/modulefiles/"
 
+# Override defaults with values written by run.sh (keeps this template untouched)
+_config_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "${_config_dir}/config.run.sh" ]]; then
+  source "${_config_dir}/config.run.sh"
+fi
+
 # ---- Helper: load a tool via module system only if not already on PATH ----
 ensure_tool() {
   local tool="$1" module_name="$2"
@@ -42,6 +48,10 @@ ensure_tool() {
 run_container() {
   local runtime="${CONTAINER_RUNTIME:-auto}"
   if [[ "$runtime" == "auto" ]]; then
+    # Try to load apptainer via module system before falling back
+    if ! command -v apptainer &>/dev/null && ! command -v singularity &>/dev/null; then
+      ensure_tool apptainer "apptainer" 2>/dev/null || true
+    fi
     if command -v apptainer &>/dev/null; then runtime="apptainer"
     elif command -v singularity &>/dev/null; then runtime="apptainer"
     elif command -v docker &>/dev/null; then runtime="docker"
@@ -100,6 +110,11 @@ submit_job() {
     # Local fallback — run sequentially
     echo "[local] Running $name..." >&2
     bash "$script" 2>&1 | tee "log/${name}.log"
+    local rc=${PIPESTATUS[0]}
+    if [[ $rc -ne 0 ]]; then
+        echo "ERROR: $name failed with exit code $rc. See log/${name}.log" >&2
+        return $rc
+    fi
     echo "local_${name}"
   fi
 }

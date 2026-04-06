@@ -11,6 +11,7 @@ scripts/Reports/
 scripts/Peptidomics_Results/
 scripts/log/
 scripts/diann_search_job.sh
+scripts/config.run.sh
 scripts/peptide.fasta
 scripts/non_canonical_peptide_headers.txt
 scripts/db_seq.txt

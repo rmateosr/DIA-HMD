@@ -235,7 +235,7 @@ All outputs are written to `results/` (or the directory specified with `--output
 
 | Job | Threads | Memory | Approx. runtime |
 |-----|---------|--------|-----------------|
-| DIA-NN (two-pass search) | `--threads` value | ~4 GB per thread | ~6 hours (20 DIA files, 32 threads) |
+| DIA-NN (two-pass search) | `--threads` value | ~6 GB per thread | ~6 hours (20 DIA files, 32 threads) |
 | Strict filtering (Python) | 1 | ~8 GB | ~5 minutes |
 | Post-processing (filtering + R) | 8 | ~32 GB | ~30 minutes |
 | R analysis (hotspot) | 1 | ~8 GB | ~5 minutes |
