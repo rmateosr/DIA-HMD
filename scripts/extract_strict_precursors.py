@@ -62,6 +62,16 @@ def main():
     n_total = len(df)
     print(f"  Total rows: {n_total:,}", file=sys.stderr)
 
+    if n_total == 0:
+        print("WARNING: No rows in input. DIA-NN may have failed to process files.", file=sys.stderr)
+        pd.DataFrame(columns=["Stripped.Sequence"]).to_csv(args.output, sep="\t", index=False)
+        sys.exit(0)
+
+    if (df["Lib.Q.Value"] == 0).all():
+        print("WARNING: All Lib.Q.Value entries are 0. This typically occurs in single-file "
+              "runs where DIA-NN disables MBR. The strict filter will pass all rows. "
+              "For meaningful FDR filtering, run with multiple input files.", file=sys.stderr)
+
     # --- Filtering ---
     # Lib.Q.Value is the statistically correct filter with MBR (--reanalyse).
     # Per DIA-NN guidance, Lib.* columns account for match-between-runs correctly.
