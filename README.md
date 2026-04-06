@@ -102,11 +102,25 @@ This pipeline requires [DIA-NN 2.0.2](https://github.com/vdemichev/DiaNN). You n
 To download the pre-built Apptainer image from the release:
 
 ```bash
-# Using GitHub CLI
+# Using GitHub CLI (recommended)
 gh release download v1.0 --pattern 'diann-2.0.2.img' --dir .
+
+# Or using curl (GitHub redirects large assets through CDN)
+curl -LO "https://github.com/rmateosr/DIA-HMD/releases/download/v1.0/diann-2.0.2.img"
 
 # Or build from the definition file
 apptainer build diann-2.0.2.img apptainer.def
+```
+
+To use the native binary instead of a container:
+
+```bash
+# Download and extract DIA-NN 2.0.2
+wget "https://github.com/vdemichev/DiaNN/releases/download/2.0/DIA-NN-2.0.2-Academia-Linux.zip"
+unzip DIA-NN-2.0.2-Academia-Linux.zip
+
+# Run pipeline with native binary
+bash run.sh --input /path/to/raw_files --diann diann-2.0.2/diann-linux --runtime native
 ```
 
 ## Usage

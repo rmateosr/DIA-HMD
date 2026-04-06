@@ -60,7 +60,15 @@ run_container() {
         "$DIANN_IMG" "$@"
       ;;
     native)
-      # In native mode, DIANN_IMG should be the path to the diann-linux binary
+      # $1 is the container-internal command path — not meaningful in native mode
+      shift
+      local diann_dir
+      diann_dir="$(cd "$(dirname "$DIANN_IMG")" && pwd)"
+      # Create libgomp symlink if missing (DIA-NN bundles it with a hashed name)
+      if [[ ! -e "${diann_dir}/libgomp.so.1" ]] && ls "${diann_dir}"/libgomp-*.so.1 &>/dev/null; then
+          ln -sf "${diann_dir}"/libgomp-*.so.1 "${diann_dir}/libgomp.so.1"
+      fi
+      export LD_LIBRARY_PATH="${diann_dir}:${LD_LIBRARY_PATH:-}"
       "$DIANN_IMG" "$@"
       ;;
     *)
