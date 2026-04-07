@@ -72,7 +72,7 @@ for(nshare in seq_along(mutationssharingpeptide)){
 }
 
 
-dir.create("Peptidomics_Results")
+dir.create("Peptidomics_Results", showWarnings = FALSE)
 write.table(normalizednumericoutputDIANN_selection, "Peptidomics_Results/hotspot_peptides.tsv", sep = "\t", quote = F, col.names = TRUE, row.names = FALSE )
 
 # Convert to character so these columns are excluded by is.numeric() downstream

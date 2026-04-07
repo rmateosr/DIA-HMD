@@ -6,15 +6,18 @@ Example DIA-MS input data is hosted on Zenodo because the files are too large fo
 
 ```bash
 # From the repository root:
-wget -O example/24f201_DIA_NCI_06_COLO205.raw.dia \
-  "https://zenodo.org/records/19393774/files/24f201_DIA_NCI_06_COLO205.raw.dia"
+wget -O example/24f201_DIA_COLO205.1.raw.dia \
+  "https://zenodo.org/records/19436340/files/24f201_DIA_COLO205.1.raw.dia"
+wget -O example/24f201_DIA_COLO205.2.raw.dia \
+  "https://zenodo.org/records/19436340/files/24f201_DIA_COLO205.2.raw.dia"
 ```
 
-**Zenodo DOI:** [10.5281/zenodo.19393774](https://doi.org/10.5281/zenodo.19393774)
+**Zenodo DOI:** [10.5281/zenodo.19436340](https://doi.org/10.5281/zenodo.19436340)
 
 | File | Size | Description |
 |------|------|-------------|
-| `24f201_DIA_NCI_06_COLO205.raw.dia` | 13 GB | DIA-MS data from COLO205 cell line (NCI-60 panel) |
+| `24f201_DIA_COLO205.1.raw.dia` | ~12 GB | DIA-MS data from COLO205 cell line (run 1) |
+| `24f201_DIA_COLO205.2.raw.dia` | ~12 GB | DIA-MS data from COLO205 cell line (run 2) |
 
 ## Running the Example
 
@@ -53,8 +56,8 @@ Rscript -e 'library(tidyverse); library(data.table); library(RColorBrewer); cat(
 # Check CLI help
 bash run.sh --help
 
-# Check DIA-NN is accessible
-apptainer exec diann-2.0.2.img /diann-2.0.2/diann-linux --help
+# Check DIA-NN is accessible (no-args prints version banner and exits cleanly)
+apptainer exec diann-2.0.2.img /diann-2.0.2/diann-linux
 ```
 
 ## Input Format

@@ -9,7 +9,6 @@ DIANN_IMG="$3"
 
 cat <<'HEADER'
 #!/bin/bash
-set -xv
 set -o errexit
 set -o nounset
 

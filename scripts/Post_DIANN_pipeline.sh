@@ -1,7 +1,6 @@
 #!/bin/bash
 # ABOUTME: Part of the DIA-NN Level 1 pipeline toolchain.
 # ABOUTME: Post-processing: peptide FASTA conversion, canonical filtering, then R analysis jobs.
-set -xv
 set -o errexit
 set -o nounset
 

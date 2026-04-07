@@ -20,10 +20,12 @@ gh release download v1.0 --pattern 'diann-2.0.2.img' --dir .
 # Or download manually from the Releases page:
 #   https://github.com/rmateosr/DIA-HMD/releases/tag/v1.0
 
-# Example DIA-MS data (13 GB) — from Zenodo
-wget -O example/24f201_DIA_NCI_06_COLO205.raw.dia \
-  "https://zenodo.org/records/19393774/files/24f201_DIA_NCI_06_COLO205.raw.dia"
-# Or download manually from: https://doi.org/10.5281/zenodo.19393774
+# Example DIA-MS data (~24 GB total, 2 files) — from Zenodo
+wget -O example/24f201_DIA_COLO205.1.raw.dia \
+  "https://zenodo.org/records/19436340/files/24f201_DIA_COLO205.1.raw.dia"
+wget -O example/24f201_DIA_COLO205.2.raw.dia \
+  "https://zenodo.org/records/19436340/files/24f201_DIA_COLO205.2.raw.dia"
+# Or download manually from: https://doi.org/10.5281/zenodo.19436340
 
 # 4. Run the pipeline
 bash run.sh \
@@ -205,16 +207,18 @@ Directory of `*.raw.dia` DIA mass spectrometry files. All files in the directory
 
 ### Example data
 
-An example DIA-MS file (`24f201_DIA_NCI_06_COLO205.raw.dia`, 13 GB) is available from Zenodo:
+Two example DIA-MS files (~12 GB each) are available from Zenodo:
 
-> **DOI:** [10.5281/zenodo.19393774](https://doi.org/10.5281/zenodo.19393774)
+> **DOI:** [10.5281/zenodo.19436340](https://doi.org/10.5281/zenodo.19436340)
 
 ```bash
 # Download into the example/ directory
-wget -O example/24f201_DIA_NCI_06_COLO205.raw.dia \
-  "https://zenodo.org/records/19393774/files/24f201_DIA_NCI_06_COLO205.raw.dia"
+wget -O example/24f201_DIA_COLO205.1.raw.dia \
+  "https://zenodo.org/records/19436340/files/24f201_DIA_COLO205.1.raw.dia"
+wget -O example/24f201_DIA_COLO205.2.raw.dia \
+  "https://zenodo.org/records/19436340/files/24f201_DIA_COLO205.2.raw.dia"
 
-# Run the pipeline on it
+# Run the pipeline on them
 bash run.sh --input example/ --diann diann-2.0.2.img --threads 4
 ```
 
