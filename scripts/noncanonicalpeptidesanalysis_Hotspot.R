@@ -183,8 +183,6 @@ for(cont in 1:length(noncanonicalpeptides)){
 
         diff_pos <- which(chars1 != chars2)
         if(chars1[diff_pos] == mutationchange[1] &  chars2[diff_pos] == mutationchange[2]){
-          print(matches)
-          print(sequencesmatching_samelength_canonical[matches])
           sequencesmatching_samelength_canonicalfiltered = c(sequencesmatching_samelength_canonicalfiltered, sequencesmatching_samelength_canonical[matches])
           Genes_sequencesmatching_samelength_canonicalfiltered = c(Genes_sequencesmatching_samelength_canonicalfiltered, Genenamematching_samelength_canonical[matches])
 
@@ -284,7 +282,7 @@ for(cont in 1:length(noncanonLabel)){
   plot_data= plot_data[order(plot_data$Status ),]
   plot_data$Label = factor(plot_data$Label, levels = unique(plot_data$Label))
   p = ggplot(plot_data, aes(x = variable, y = value , color = Label, shape = Status))   +
-    geom_point(size = 3)+ theme_minimal() + coord_flip()  +xlab("Cell Line") + ylab("Raw Intensity")+
+    geom_point(size = 3, na.rm = TRUE)+ theme_minimal() + coord_flip()  +xlab("Cell Line") + ylab("Raw Intensity")+
     scale_color_manual(values = myColors) + ggtitle(str_split_fixed(noncanonLabel[cont], "_",2)[1]) +
     scale_shape_manual(values = c("Not Mutated" = 16, "Mutated" = 17), drop = FALSE)
 
@@ -388,7 +386,7 @@ for(cont in 1:length(noncanonLabel)){
   plot_data$variable = factor(plot_data$variable , levels = unique(plot_data$variable)[length(unique(plot_data$variable )):1])
   title = unique(gsub("_", " ", plot_data$Label))[which.max(nchar(unique(gsub("_", " ", plot_data$Label))))]
   p = ggplot(plot_data, aes(x = variable, y = value , color = Label, shape = Status))   +
-    geom_point(size = 3)+ theme_minimal() + coord_flip()  +xlab("Cell Line") + ylab("Raw Intensity")+
+    geom_point(size = 3, na.rm = TRUE)+ theme_minimal() + coord_flip()  +xlab("Cell Line") + ylab("Raw Intensity")+
     scale_color_manual(values = myColors) + ggtitle(title) +
     scale_shape_manual(values = c("Not Mutated" = 16, "Mutated" = 17), drop = FALSE)
 

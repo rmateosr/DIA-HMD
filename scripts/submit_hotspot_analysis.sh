@@ -1,7 +1,7 @@
 #!/bin/bash
 # ABOUTME: Part of the DIA-NN Level 1 pipeline toolchain.
 # ABOUTME: Runs hotspot peptide analysis in R.
-set -xv
+[[ -n "${DEBUG:-}" ]] && set -xv
 set -o errexit
 set -o nounset
 SCRIPT_DIR="${SGE_O_WORKDIR:-${SLURM_SUBMIT_DIR:-$(cd "$(dirname "$0")" && pwd)}}"

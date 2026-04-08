@@ -3,7 +3,7 @@
 # ABOUTME: Filters peptide.fasta against the canonical proteome; writes non-canonical headers.
 start=$(date +%s)
 
-set -xv
+[[ -n "${DEBUG:-}" ]] && set -xv
 set -o errexit
 set -o nounset
 
