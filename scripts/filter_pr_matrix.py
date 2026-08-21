@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # ABOUTME: Filters a DIA-NN pr_matrix to retain only precursors whose stripped sequence
-# ABOUTME: appears in a strict-filtered peptide list.
+# ABOUTME: appears in a q-value-filtered peptide list.
+
+# Not part of the pipeline: at the 1% FDR DIA-NN already applies on output, this filter keeps
+# 100% of rows (measured: 0 of 338,469 and 0 of 280,698 dropped). Kept for the case where the
+# peptide-level threshold is tightened below DIA-NN's own. Do not point its output at
+# pr_matrix.strict.tsv -- that name belongs to gate_variant_cells.py.
 
 import argparse
 import os
@@ -13,7 +18,8 @@ def main():
 
     default_matrix = os.path.join(script_dir, "Reports", "report_peptidoforms.pr_matrix.tsv")
     default_peptides = os.path.join(script_dir, "Reports", "strict_precursors_peptide_list.tsv")
-    default_output = os.path.join(script_dir, "Reports", "report_peptidoforms.pr_matrix.strict.tsv")
+    default_output = os.path.join(script_dir, "Reports",
+                                  "report_peptidoforms.pr_matrix.peptide_filtered.tsv")
 
     parser = argparse.ArgumentParser(
         description="Filter pr_matrix to rows matching a strict-filtered peptide list"

@@ -26,9 +26,14 @@ def main():
         help="Output TSV path (default: %(default)s)"
     )
     parser.add_argument(
-        "--lib-qvalue", type=float, default=0.001,
-        help="Lib.Q.Value threshold (default: 0.001 = 0.1%% FDR). "
-             "With MBR enabled, Lib.* columns are statistically correct per DIA-NN guidance."
+        "-q", "--qvalue", type=float, default=0.01,
+        help="Q.Value threshold (default: 0.01 = 1%% FDR)"
+    )
+    parser.add_argument(
+        "--lib-qvalue", type=float, default=0.01,
+        help="Lib.Q.Value threshold (default: 0.01 = 1%% FDR). Study-wide identification "
+             "FDR, per DIA-NN's guidance for MBR runs. Tightening it here deletes peptides "
+             "before the per-run Q.Value and replicate filters can judge them."
     )
     parser.add_argument(
         "--full-table", action="store_true", default=False,
@@ -69,18 +74,22 @@ def main():
 
     if (df["Lib.Q.Value"] == 0).all():
         print("WARNING: All Lib.Q.Value entries are 0. This typically occurs in single-file "
-              "runs where DIA-NN disables MBR. The strict filter will pass all rows. "
-              "For meaningful FDR filtering, run with multiple input files.", file=sys.stderr)
+              "runs where DIA-NN disables MBR. For meaningful study-wide FDR, run with "
+              "multiple input files.", file=sys.stderr)
 
     # --- Filtering ---
-    # Lib.Q.Value is the statistically correct filter with MBR (--reanalyse).
-    # Per DIA-NN guidance, Lib.* columns account for match-between-runs correctly.
+    # Both thresholds equal the 1% FDR DIA-NN already applied on output, so nothing is removed
+    # here: what this writes is a per-peptide summary table. The real filters -- per-run
+    # Q.Value <= 0.001, the replicate requirement and fragment geometry -- are applied
+    # downstream by gate_variant_cells.py and classify_hotspot_detections.py, which read the
+    # parquet report and can therefore see every individual run a peptide appears in.
+    q = args.qvalue
     lq = args.lib_qvalue
-    mask = df["Lib.Q.Value"] <= lq
+    mask = (df["Q.Value"] <= q) & (df["Lib.Q.Value"] <= lq)
 
     df_filt = df.loc[mask].copy()
     n_pass = len(df_filt)
-    print(f"  Threshold: Lib.Q.Value <= {lq}",
+    print(f"  Thresholds: Q.Value <= {q}, Lib.Q.Value <= {lq}",
           file=sys.stderr)
     print(f"  Rows passing: {n_pass:,} ({n_pass / n_total * 100:.1f}%)", file=sys.stderr)
 
