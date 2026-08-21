@@ -68,6 +68,50 @@ ensure_tool() {
   fi
 }
 
+# ---- Helper: stop with a readable message when an upstream stage produced nothing ----
+# SGE's -hold_jid releases a job when its predecessor FINISHES, whatever its exit status, unlike
+# SLURM's --dependency=afterok. So on SGE a failed DIA-NN search does not stop the chain: the next
+# stage starts and dies on a missing file, and what the user sees is a stack trace from whichever
+# tool happened to open it first. These checks turn that into one line naming the stage to look at.
+# Usage: require_inputs <upstream job name> <file>...
+require_inputs() {
+  local upstream="$1"; shift
+  local missing=0 f
+  for f in "$@"; do
+    if [[ ! -s "$f" ]]; then
+      echo "ERROR: required input is missing or empty: $f" >&2
+      missing=1
+    fi
+  done
+  if (( missing )); then
+    echo "ERROR: the $upstream stage did not produce what this stage needs." >&2
+    echo "       Look at log/${upstream}.* for why, then rerun from there." >&2
+    exit 1
+  fi
+}
+
+# ---- Helper: directories the container has to be able to see ----
+# The ones we name, plus wherever any symlink among the inputs actually points. Keeping raw data
+# elsewhere and symlinking it into an input directory is a normal way to organise it, and binding
+# the directory does not bind what its links point at.
+#
+# Whether that matters depends on the runtime. Docker mounts nothing but what -v names, so a
+# symlink out of the input directory always dangles inside the container. Apptainer is
+# configuration-dependent: a site with a permissive bind path list may expose the target anyway,
+# and one with a restrictive list will not. Resolving the inputs and binding their real parents
+# makes the outcome the same everywhere, and costs nothing when there are no symlinks -- readlink
+# -f returns the path itself and the duplicate is dropped.
+_container_bind_dirs() {
+  local dirs=("$PWD" "$SAMPLE_DIR" "$(dirname "$FASTA_FILE")")
+  local f real
+  for f in "$SAMPLE_DIR"/*.raw.dia "$FASTA_FILE"; do
+    [[ -e "$f" ]] || continue
+    real="$(readlink -f "$f" 2>/dev/null)" || continue
+    [[ -n "$real" ]] && dirs+=("$(dirname "$real")")
+  done
+  printf '%s\n' "${dirs[@]}" | awk 'NF && !seen[$0]++'
+}
+
 # ---- Helper: run a command inside the DIA-NN container (or natively) ----
 # Usage: run_container <command> [args...]
 # The container image is taken from $DIANN_IMG. The runtime is auto-detected
@@ -90,19 +134,14 @@ run_container() {
   fi
   case "$runtime" in
     apptainer)
-      "$apptainer_cmd" exec \
-        --bind "$SAMPLE_DIR" \
-        --bind "$(dirname "$FASTA_FILE")" \
-        --bind "$PWD" \
-        "$DIANN_IMG" "$@"
+      local bind_args=() d
+      while IFS= read -r d; do bind_args+=(--bind "$d"); done < <(_container_bind_dirs)
+      "$apptainer_cmd" exec "${bind_args[@]}" "$DIANN_IMG" "$@"
       ;;
     docker)
-      docker run --rm \
-        -v "$PWD:$PWD" \
-        -v "$(dirname "$FASTA_FILE"):$(dirname "$FASTA_FILE")" \
-        -v "$SAMPLE_DIR:$SAMPLE_DIR" \
-        -w "$PWD" \
-        "$DIANN_IMG" "$@"
+      local vol_args=() d
+      while IFS= read -r d; do vol_args+=(-v "$d:$d"); done < <(_container_bind_dirs)
+      docker run --rm "${vol_args[@]}" -w "$PWD" "$DIANN_IMG" "$@"
       ;;
     native)
       # $1 is the container-internal command path — not meaningful in native mode

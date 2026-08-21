@@ -8,6 +8,10 @@ SCRIPT_DIR="${SGE_O_WORKDIR:-${SLURM_SUBMIT_DIR:-$(cd "$(dirname "$0")" && pwd)}
 source "$SCRIPT_DIR/config.sh"
 ensure_tool Rscript R/4.4.3
 
+require_inputs PostDIANN \
+  Reports/report_peptidoforms.pr_matrix.strict.tsv \
+  non_canonical_peptide_headers.txt
+
 # PROTEOME_FILE loaded from config.sh
 Rscript noncanonicalpeptidesanalysis_Hotspot.R "$PROTEOME_FILE"
 

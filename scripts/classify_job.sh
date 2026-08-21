@@ -11,6 +11,9 @@ source "$SCRIPT_DIR/config.sh"
 
 ensure_tool python3 "python/3.12.0"
 
+require_inputs PostDIANN non_canonical_peptide_headers.txt
+require_inputs DIANN Reports/report_peptidoforms.parquet Library/library_FROM_peptidoform.parquet
+
 mkdir -p Peptidomics_Results
 
 echo "=== Hotspot detection classification ==="

@@ -8,6 +8,8 @@ source "$SCRIPT_DIR/config.sh"
 
 ensure_tool python3 "python/3.12.0"
 
+require_inputs DIANN Reports/report_peptidoforms.parquet
+
 echo "=== Precursor summary ==="
 
 python3 "$SCRIPT_DIR/extract_strict_precursors.py" \

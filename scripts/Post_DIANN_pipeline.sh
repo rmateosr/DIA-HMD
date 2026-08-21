@@ -10,6 +10,13 @@ source "$SCRIPT_DIR/config.sh"
 
 ensure_tool python3 "python/3.12.0"
 
+# All three come from the search, not from StrictFilter -- this stage depends on that one for
+# ordering only, so the search is the stage to name if any of them is absent.
+require_inputs DIANN \
+  Reports/report_peptidoforms.pr_matrix.tsv \
+  Reports/report_peptidoforms.parquet \
+  Library/library_FROM_peptidoform.parquet
+
 # Convert DIA-NN peptidoform matrix to FASTA for canonical filtering
 # Header format: >{Protein.Group}_{Stripped.Sequence}_{Precursor.Charge}
 awk -F'\t' '

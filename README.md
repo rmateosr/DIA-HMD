@@ -217,6 +217,23 @@ The pipeline automatically detects and uses whichever scheduler is available:
 
 No manual editing of scheduler directives is needed. On a local machine without a scheduler, all steps run sequentially.
 
+### When a stage fails
+
+The two schedulers differ in what a dependency means. SLURM's `--dependency=afterok` releases a
+job only if its predecessor **succeeded**; SGE's `-hold_jid` releases it when the predecessor
+**finishes**, whatever its exit status. So on SGE a failed search does not stop the chain — the
+next stage starts anyway.
+
+Each stage therefore checks its own inputs first and stops with the name of the stage to look at:
+
+```
+ERROR: required input is missing or empty: Reports/report_peptidoforms.parquet
+ERROR: the DIANN stage did not produce what this stage needs.
+       Look at log/DIANN.* for why, then rerun from there.
+```
+
+Every stage's log is in `scripts/log/`, named after the job.
+
 ## Detection filters
 
 A peptide carrying a mutation is only evidence of that mutation if the measurement can tell it
@@ -298,6 +315,10 @@ under `data/truth/` and `data/cohorts/`.
 ### DIA raw files
 
 Directory of `*.raw.dia` DIA mass spectrometry files. All files in the directory are included in the search.
+
+The files may be symlinks to data held elsewhere. Container runtimes only see what is mounted for
+them, and mounting a directory does not mount what its links point at, so the pipeline resolves
+each input and mounts its real parent directory as well. Nothing is needed from you either way.
 
 ### Example data
 
