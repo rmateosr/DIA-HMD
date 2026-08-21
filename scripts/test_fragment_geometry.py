@@ -141,7 +141,9 @@ if __name__ == "__main__":
         try:
             n = fn()
             print(f"PASS  {name}  ({n} checks)")
-        except AssertionError as exc:
+        except (AssertionError, SystemExit) as exc:
+            # SystemExit too: the loaders exit on a malformed file, and an unexpected one must be
+            # reported as this test failing rather than silently ending the whole run.
             failed += 1
             print(f"FAIL  {name}\n      {exc}")
     print("\nall checks passed" if not failed else f"\n{failed} test(s) failed")

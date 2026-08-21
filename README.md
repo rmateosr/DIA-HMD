@@ -250,10 +250,11 @@ difference as part of the mutation.
 `0.15` is the largest cost-free cut available in both published cohorts — it drops no genomically
 confirmed call while taking cell-line precision from 48.0% to 80.0% and PDX from 66.7% to 81.5%.
 It was fitted on substitutions; indels are scored against it unchanged. `scripts/test_fragment_geometry.py`
-checks the rule on written-out sequences and needs no data:
+checks the rule on written-out sequences, and `scripts/test_run_samples.py` checks the cohort
+loaders. Neither needs any data:
 
 ```bash
-cd scripts && python3 test_fragment_geometry.py
+cd scripts && python3 test_fragment_geometry.py && python3 test_run_samples.py
 ```
 
 ### The replicate requirement defaults to off

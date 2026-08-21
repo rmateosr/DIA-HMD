@@ -77,8 +77,8 @@ If you want to check dependencies without downloading the full example data:
 # Check Python deps
 python3 -c "import pandas; import pyarrow; print('Python OK')"
 
-# Check the fragment-geometry rule (needs no data at all)
-(cd scripts && python3 test_fragment_geometry.py)
+# Check the scoring rule and the cohort loaders (need no data at all)
+(cd scripts && python3 test_fragment_geometry.py && python3 test_run_samples.py)
 
 # Check R deps
 Rscript -e 'library(tidyverse); library(data.table); library(RColorBrewer); cat("R OK\n")'

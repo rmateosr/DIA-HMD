@@ -41,11 +41,16 @@ def run_key(name):
     return base
 
 
-def _read_tsv(path, columns):
+def _read_tsv(path, columns, required):
     """Yield one tuple per data row, or nothing at all if the file is not there.
 
+    `columns` is what each tuple carries; only `required` has to be present in the header, and a
+    column that is absent comes back empty. That distinction is the point: a sample map may be
+    written with just (run, sample), which is what the documentation asks for, and the optional
+    run_label must not turn that into an error.
+
     Written without pandas so the loaders stay usable from a script that has not imported it,
-    and so a missing optional column is reported by name rather than as a KeyError.
+    and so a missing required column is reported by name rather than as a KeyError.
     """
     if not path or not os.path.exists(path):
         return
@@ -58,7 +63,7 @@ def _read_tsv(path, columns):
             fields = line.split("\t")
             if header is None:
                 header = fields
-                missing = [c for c in columns if c not in header]
+                missing = [c for c in required if c not in header]
                 if missing:
                     raise SystemExit(
                         f"ERROR: {path} is missing the column(s) {', '.join(missing)}. "
@@ -100,7 +105,7 @@ class SampleMap:
 def load_sample_map(path):
     """TSV: run, sample, and optionally run_label for how the run is printed in reports."""
     rows = []
-    for run, sample, label in _read_tsv(path, ["run", "sample", "run_label"]):
+    for run, sample, label in _read_tsv(path, ["run", "sample", "run_label"], ["run", "sample"]):
         if not run:
             continue
         rows.append((run, sample or run_key(run), label))
@@ -109,13 +114,14 @@ def load_sample_map(path):
 
 def load_aliases(path):
     """TSV: truth_name, run_name. Maps a truth-table sample name onto the name the runs use."""
-    return {t: r for t, r in _read_tsv(path, ["truth_name", "run_name"]) if t}
+    cols = ["truth_name", "run_name"]
+    return {t: r for t, r in _read_tsv(path, cols, cols) if t}
 
 
 def load_pools(path):
     """TSV: pool, members. '*' = any truth mutation counts, empty = none does, else 'A;B'."""
     pools = {}
-    for pool, members in _read_tsv(path, ["pool", "members"]):
+    for pool, members in _read_tsv(path, ["pool", "members"], ["pool", "members"]):
         if not pool:
             continue
         members = members.strip()
