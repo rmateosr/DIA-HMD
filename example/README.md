@@ -42,6 +42,33 @@ Expected outputs in `results/`:
 | `hotspot_by_gene.pdf` | Scatter plots grouped by gene |
 | `hotspot_by_mutation.pdf` | Scatter plots grouped by mutation |
 
+`scripts/Reports/report_peptidoforms.pr_matrix.strict.tsv` is also written: DIA-NN's precursor
+matrix with the variant cells the detection gate rejected emptied. It is what the two PDFs read.
+
+## Exercising the classification stage
+
+These two files are one cell line injected twice, so they are the case where the replicate
+requirement can be switched on — and COLO205's BRAF V600E is in the shipped cell-line truth table,
+so the calls can be scored. The shipped sample map names the runs of the full published cohort,
+not these two, so write a two-row one for them:
+
+```bash
+printf 'run\tsample\n24f201_DIA_COLO205.1\tCOLO205\n24f201_DIA_COLO205.2\tCOLO205\n' \
+  > example/colo205_sample_map.tsv
+
+bash run.sh --input example/ --diann diann-2.0.2.img --threads 4 \
+  --truth data/truth/Table1_hotspotcelllines_stopfree.tsv \
+  --sample-map example/colo205_sample_map.tsv \
+  --min-replicates 2
+```
+
+The `run` column is the file name with `.raw.dia` removed. That adds
+`hotspot_detection_classification.tsv` and `hotspot_detection_classification_summary.txt` to
+`results/`; the summary's Section 1 should report BRAF p.V600E as detected in COLO205.
+
+Dropping `--sample-map` and `--min-replicates` also works: each injection is then its own sample,
+and the two are reported separately.
+
 ## Verifying Your Installation
 
 If you want to check dependencies without downloading the full example data:
@@ -49,6 +76,9 @@ If you want to check dependencies without downloading the full example data:
 ```bash
 # Check Python deps
 python3 -c "import pandas; import pyarrow; print('Python OK')"
+
+# Check the fragment-geometry rule (needs no data at all)
+(cd scripts && python3 test_fragment_geometry.py)
 
 # Check R deps
 Rscript -e 'library(tidyverse); library(data.table); library(RColorBrewer); cat("R OK\n")'
