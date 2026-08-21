@@ -1,0 +1,14 @@
+Sample	Gene	Protein.Change	Detected.By.DIANN	Reason.Undetectable
+A549	KRAS	p.G12S	TRUE	
+A549	KEAP1	p.G333C	FALSE	No justification found
+CCRFCEM	KRAS	p.G12D	TRUE	
+CCRFCEM	TP53	p.R248Q	FALSE	Peptide too long to be detected: 36 Aa
+CCRFCEM	TP53	p.R175H	FALSE	No justification found
+CCRFCEM	FBXW7	p.R465C	FALSE	No justification found
+COLO205	BRAF	p.V600E	TRUE	
+NCIH23	KRAS	p.G12C	TRUE	
+NCIH23	TP53	p.M246I	FALSE	Peptide too long to be detected: 35 Aa
+RPMI8226	KRAS	p.G12A	TRUE	
+RPMI8226	TP53	p.E285K	FALSE	Peptide too short to be detected: 2 Aa
+T47D	TP53	p.L194F	TRUE	
+T47D	PIK3CA	p.H1047R	FALSE	Peptide too short to be detected: 6 Aa

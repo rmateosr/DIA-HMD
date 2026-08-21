@@ -6,7 +6,33 @@
 SAMPLE_DIR="/path/to/your/DIA/raw/files"           # directory containing *.raw.dia
 FASTA_FILE="../data/fasta/proteome.fasta"           # bundled with this repo
 DIANN_IMG="/path/to/diann-2.0.2.img"                # DIA-NN Apptainer/Docker image or native binary path
-PROTEOME_FILE="../data/fasta/human_canonical_proteome.fasta"  # bundled with this repo
+PROTEOME_FILE="../data/fasta/proteome_nonmutated.fasta"  # bundled with this repo
+
+# ---- Detection filters ----
+# Per-run Q.Value a variant precursor must reach to count as present in that sample. DIA-NN's
+# own output is already at 1% run FDR, so this is the gate that actually decides presence.
+QVALUE_GATE=0.001
+# Share of a variant peptide's library fragment intensity that must come from ions containing the
+# mutated residue. A fragment that misses the site has the same mass in the mutant as in the wild
+# type, so it is signal the normal protein produces identically.
+FRAGMENT_MIN=0.15
+# Injections of a sample a call must be seen in. 1 = off, which is the default because your
+# replicate structure is unknown to this pipeline. The published cohorts used 2, which needs a
+# SAMPLE_MAP below to say which runs belong together.
+MIN_REPLICATES=1
+
+# ---- Cohort description (all optional; leave empty for the generic case) ----
+# Ground truth for TP/FP classification: TSV with Sample, Gene, Protein.Change,
+# Detected.By.DIANN. Empty means the classification stage is skipped -- there is nothing to
+# classify against. See data/truth/ for the two published cohorts.
+TRUTH_FILE=""
+# TSV (run, sample, optional run_label) grouping injections into samples. Empty: one sample per
+# run. See data/cohorts/.
+SAMPLE_MAP=""
+# TSV (truth_name, run_name) for samples the truth table spells differently from the run names.
+ALIASES_FILE=""
+# TSV (pool, members) naming samples that are mixtures of others.
+POOLS_FILE=""
 
 # ---- Container runtime for DIA-NN ----
 # Options: "apptainer", "docker", "native", or "" for auto-detect

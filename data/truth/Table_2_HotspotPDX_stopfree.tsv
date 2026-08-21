@@ -1,0 +1,65 @@
+Sample	Gene	Protein.Change	Detected.By.DIANN	Reason.Undetectable
+J-PDX0961	CTNNB1	p.S37C	FALSE	S33C found instead
+J-PDX0464	TP53	p.R337L	TRUE	Detected
+J-PDX0220	KRAS	p.G12R	FALSE	No justification found
+J-PDX0263	KRAS	p.A59T	FALSE	No justification found
+J-PDX0220	TP53	p.R175H	FALSE	No justification found
+J-PDX0009	KRAS	p.G13D	FALSE	G12D found instead
+J-PDX0919	ERBB3	p.F219L	FALSE	Peptide too long to be detected: 40Aa
+J-PDX0987	TP53	p.I195T	FALSE	No justification found
+J-PDX1107	CTNNB1	p.G34R	TRUE	Detected
+J-PDX1107	PTEN	p.R130L	FALSE	No justification found
+J-PDX0270	KRAS	p.G13D	FALSE	G12D found instead
+J-PDX0013	TP53	p.R248W	FALSE	Peptide too long to be detected: 36 Aa
+J-PDX0013	SMAD4	p.G386C	FALSE	No justification found
+J-PDX0360	PIK3CA	p.E545K	FALSE	No justification found
+J-PDX0093	KRAS	p.G12V	TRUE	Detected
+J-PDX0454	PIK3CA	p.H1047R	FALSE	Peptide too short to be detected: 6 Aa
+J-PDX0919	KRAS	p.G12V	TRUE	Detected
+J-PDX0013	KRAS	p.G12D	TRUE	Detected
+J-PDX0381	TP53	p.R282W	FALSE	Peptide too short to be detected: 3 Aa 
+J-PDX0360	KRAS	p.G12V	TRUE	Detected
+J-PDX0263	ERBB3	p.V104M	FALSE	Peptide too short to be detected: 3 Aa 
+J-PDX0263	ERBB2	p.V842I	FALSE	Peptide too short to be detected: 4 Aa
+J-PDX0175	KRAS	p.G12V	TRUE	Detected
+J-PDX0079	TP53	p.C238Y	FALSE	Peptide too long to be detected: 35 Aa
+J-PDX0009	PIK3R1	p.K567E	TRUE	Detected
+J-PDX0381	KRAS	p.G12D	TRUE	Detected
+J-PDX0079	KRAS	p.G12D	TRUE	Detected
+J-PDX0560	TP53	p.R175H	FALSE	No justification found
+J-PDX0207	TP53	p.R158L	FALSE	No justification found
+J-PDX0940	SMAD4	p.R361G	FALSE	Peptide too long to be detected: 32 Aa
+J-PDX0560	KRAS	p.G12V	TRUE	Detected
+J-PDX0826	TP53	p.R280G	FALSE	No justification found
+J-PDX0224	CTNNB1	p.D32N	TRUE	Detected
+J-PDX0826	KRAS	p.G12D	TRUE	Detected
+J-PDX0804	TP53	p.Y205C	FALSE	No justification found
+J-PDX0083	KRAS	p.G12V	TRUE	Detected
+J-PDX0596	KRAS	p.G12C	TRUE	Detected
+J-PDX0747	CTNNB1	p.S37Y	TRUE	Detected
+J-PDX0747	PIK3CA	p.R88Q	FALSE	Peptide too short to be detected: 6 Aa 
+J-PDX0747	PIK3CA	p.M1043I	FALSE	No justification found
+J-PDX0747	FBXW7	p.R689W	FALSE	No justification found
+J-PDX0747	PTPRD	p.S431L	FALSE	No justification found
+J-PDX0747	PTEN	p.R130Q	FALSE	No justification found
+J-PDX0747	DNMT1	p.E51K	FALSE	Peptide too short to be detected: 6 Aa
+J-PDX0334	CTNNB1	p.G34E	TRUE	Detected
+J-PDX0334	AKT1	p.E17K	FALSE	Peptide too short to be detected: 3 Aa
+J-PDX0865	TP53	p.Y236C	FALSE	Peptide too long to be detected: 35 Aa 
+J-PDX0438	IDH1	p.R132C	TRUE	Detected
+J-PDX0065	TP53	p.C135S	FALSE	No justification found
+J-PDX0270	PIK3CA	p.R93W	FALSE	No justification found
+J-PDX0270	PIK3CA	p.M1043V	FALSE	No justification found
+J-PDX0326	KRAS	p.G12D	TRUE	Detected
+J-PDX0282	KRAS	p.G12V	TRUE	Detected
+J-PDX0958	TP53	p.A159P	FALSE	Peptide too short to be detected: 6Aa
+J-PDX0587	TP53	p.G245S	FALSE	Peptide too long to be detected: 35 Aa
+J-PDX0927	KRAS	p.G12V	TRUE	Detected
+J-PDX0850	NRAS	p.G12V	TRUE	Detected
+J-PDX0560	PREX2	p.L50V	FALSE	"Protein not expressed in sample/ Only expressed in Uterine, Ovarian and Rhabdomyosarcoma samples"
+J-PDX0277	KRAS	p.G12D	TRUE	Detected
+J-PDX0277	TP53	p.H193R	FALSE	No justification found
+J-PDX0263	PIK3CA	p.H1047R	FALSE	Peptide too short to be detected: 6Aa 
+J-PDX0263	TP53	p.Y236C	FALSE	Peptide too long to be detected: 35 Aa
+J-PDX0270	PIK3R2	p.G373R	FALSE	Peptide too short to be detected: 2Aa
+J-PDX0270	PPP2R1A	p.R183Q	FALSE	Peptide too short to be detected: 6 Aa 

@@ -13,6 +13,10 @@ chmod +x generate_diann_job.sh
 chmod +x diann_search_job.sh
 
 DIANN_JOB=$(submit_job DIANN "$DIANN_THREADS" 6G "" diann_search_job.sh)
-FILTER_JOB=$(submit_job StrictFilter 1 8G "$DIANN_JOB" strict_filter.sh)
+# StrictFilter: 4 slots for the 32G s_vmem ceiling, not for parallelism. pyarrow reads the whole
+# report into memory and reserves far more virtual memory than it resides: 1 slot x 8G is enough
+# for a 459M cell-line parquet (6.9G peak) but not for a 1.5G one, where it died with SIGXCPU.
+# The output is reporting-only, so that failure was silent.
+FILTER_JOB=$(submit_job StrictFilter 4 8G "$DIANN_JOB" strict_filter.sh)
 # PostDIANN: 8 slots * 4G = 32G total — R analysis needs ~32 GB regardless of DIA-NN thread count
 submit_job PostDIANN 8 4G "$FILTER_JOB" Post_DIANN_pipeline.sh
