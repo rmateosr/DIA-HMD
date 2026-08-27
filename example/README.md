@@ -22,9 +22,8 @@ wget -O example/24f201_DIA_COLO205.2.raw.dia \
 ## Running the Example
 
 ```bash
-# 1. Make sure you have the DIA-NN image (download from the GitHub Release or build it)
+# 1. Make sure you have DIA-NN (see the main README for the alternatives)
 gh release download v1.0 --pattern 'diann-2.0.2.img' --dir .
-# Or: apptainer build diann-2.0.2.img apptainer.def
 
 # 2. Run the pipeline
 bash run.sh --input example/ --diann diann-2.0.2.img --threads 4
