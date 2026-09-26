@@ -1,6 +1,6 @@
 # Example Data
 
-Example DIA-MS input data is hosted on Zenodo because the files are too large for GitHub (~13 GB).
+Example DIA-MS input data is hosted on Zenodo because the files are too large for GitHub (~12 GB each).
 
 ## Download
 
@@ -23,7 +23,7 @@ wget -O example/24f201_DIA_COLO205.2.raw.dia \
 
 ```bash
 # 1. Make sure you have DIA-NN (see the main README for the alternatives)
-gh release download v1.0 --pattern 'diann-2.0.2.img' --dir .
+wget https://github.com/rmateosr/DIA-HMD/releases/download/v1.0/diann-2.0.2.img
 
 # 2. Run the pipeline
 bash run.sh --input example/ --diann diann-2.0.2.img --threads 4
@@ -47,21 +47,20 @@ matrix with the variant cells the detection gate rejected emptied. It is what th
 ## Exercising the classification stage
 
 These two files are one cell line injected twice, so they are the case where the replicate
-requirement can be switched on — and COLO205's BRAF V600E is in the shipped cell-line truth table,
-so the calls can be scored. The shipped sample map names the runs of the full published cohort,
-not these two, so write a two-row one for them:
+requirement can be switched on — and COLO205's BRAF V600E is in `colo205_truth.tsv` here, so the
+calls can be scored:
 
 ```bash
-printf 'run\tsample\n24f201_DIA_COLO205.1\tCOLO205\n24f201_DIA_COLO205.2\tCOLO205\n' \
-  > example/colo205_sample_map.tsv
-
 bash run.sh --input example/ --diann diann-2.0.2.img --threads 4 \
-  --truth data/truth/Table1_hotspotcelllines_stopfree.tsv \
+  --truth example/colo205_truth.tsv \
   --sample-map example/colo205_sample_map.tsv \
   --min-replicates 2
 ```
 
-The `run` column is the file name with `.raw.dia` removed. That adds
+`colo205_truth.tsv` is the ground truth: one row per mutation you know is in a sample, with
+columns `Sample`, `Gene`, `Protein.Change` and `Detected.By.DIANN`. `colo205_sample_map.tsv`
+says which runs are injections of the same sample; its `run` column is the file name with
+`.raw.dia` removed. That adds
 `hotspot_detection_classification.tsv` and `hotspot_detection_classification_summary.txt` to
 `results/`; the summary's Section 1 should report BRAF p.V600E as detected in COLO205.
 

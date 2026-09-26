@@ -1,5 +1,5 @@
 #!/bin/bash
-# ABOUTME: Central configuration for the DIANN paper pipeline.
+# ABOUTME: Central configuration for DIA-HMD.
 # ABOUTME: Edit the values below before running Complete_pipeline.sh.
 
 # ---- User-configurable paths ----
@@ -24,10 +24,10 @@ MIN_REPLICATES=1
 # ---- Cohort description (all optional; leave empty for the generic case) ----
 # Ground truth for TP/FP classification: TSV with Sample, Gene, Protein.Change,
 # Detected.By.DIANN. Empty means the classification stage is skipped -- there is nothing to
-# classify against. See data/truth/ for the two published cohorts.
+# classify against. See example/colo205_truth.tsv for the format.
 TRUTH_FILE=""
 # TSV (run, sample, optional run_label) grouping injections into samples. Empty: one sample per
-# run. See data/cohorts/.
+# run. See example/colo205_sample_map.tsv for the format.
 SAMPLE_MAP=""
 # TSV (truth_name, run_name) for samples the truth table spells differently from the run names.
 ALIASES_FILE=""

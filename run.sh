@@ -1,5 +1,5 @@
 #!/bin/bash
-# ABOUTME: CLI entry point for the DIANN paper pipeline.
+# ABOUTME: CLI entry point for DIA-HMD.
 # ABOUTME: Validates inputs, writes config, and runs the full pipeline.
 set -euo pipefail
 
@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 usage() {
     cat <<EOF
-DIANN Paper Pipeline — Somatic mutation (hotspot) peptide detection from DIA-MS data
+DIA-HMD — Somatic mutation (hotspot) peptide detection from DIA-MS data
 
 Usage: $(basename "$0") [OPTIONS]
 
@@ -47,12 +47,10 @@ Examples:
   # Native DIA-NN binary (no container)
   $(basename "$0") --input /data/raw_files --diann /usr/local/bin/diann-linux --runtime native
 
-  # Reproduce the published cell-line cohort: replicate injections and a ground truth
-  $(basename "$0") --input /data/celllines --diann diann-2.0.2.img --threads 32 \\
-      --truth data/truth/Table1_hotspotcelllines_stopfree.tsv \\
-      --sample-map data/cohorts/celllines_sample_map.tsv \\
-      --aliases data/cohorts/celllines_aliases.tsv \\
-      --pools data/cohorts/celllines_pools.tsv \\
+  # Score calls against mutations you already know: replicate injections and a ground truth
+  $(basename "$0") --input example/ --diann diann-2.0.2.img --threads 4 \\
+      --truth example/colo205_truth.tsv \\
+      --sample-map example/colo205_sample_map.tsv \\
       --min-replicates 2
 EOF
     exit "${1:-0}"

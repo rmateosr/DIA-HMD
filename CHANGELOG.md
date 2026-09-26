@@ -31,8 +31,8 @@ is quoted as "identical", it means byte-for-byte against the output the paper wa
   on a fresh clone with no data downloaded.
 - **`scripts/make_stopfree_fasta.py`** — builds the search database, and refuses to write if the
   number of stop-gain entries it drops is not the number it was told to expect.
-- **Reference data**: `data/truth/` (both cohorts' ground truth) and `data/cohorts/` (sample
-  maps, aliases, pool compositions), as worked examples for `--truth`.
+- **Worked cohort description**: `example/colo205_truth.tsv` and
+  `example/colo205_sample_map.tsv`, the two files the example run scores itself against.
 
 ### Changed
 
@@ -57,8 +57,6 @@ is quoted as "identical", it means byte-for-byte against the output the paper wa
   filtering that matters moved to the gate, which reads the parquet report and can therefore see
   every individual run a peptide appears in. `Lib.Q.Value` cannot decide presence in a sample: it
   carries one value per peptide for the whole study.
-- **`filter_pr_matrix.py` is no longer part of the pipeline** and writes
-  `pr_matrix.peptide_filtered.tsv`, so it cannot overwrite the gated matrix.
 - **R analysis**: wild-type counterpart genes are resolved through `Protein.Ids` instead of
   DIA-NN's `Genes` field, which names only one of the proteins a peptide is consistent with —
   `IGDFGLATVK` was labelled RAF1 inside the BRAF V600E panel, and unmutated `LVVVGAGGVGK` was
@@ -87,4 +85,4 @@ injection: 22 TP / 4 FP → 24 TP / 7 FP (PDX) and 6 TP / 1 FP → 6 TP / 2 FP (
 
 ## v1.0 — 2026-04-08
 
-First public release. See `BUGFIXES_20260406.md` for the portability work that preceded it.
+First public release.

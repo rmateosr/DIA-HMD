@@ -1,4 +1,4 @@
-name: diann-pipeline
+name: dia-hmd
 channels:
   - conda-forge
   - defaults

@@ -4,7 +4,7 @@ From: rocker/r-ver:4.4.3
 %labels
     Author Raul N. Mateos
     Version 2.0.0
-    Description DIANN paper pipeline — proteogenomic hotspot peptide detection
+    Description DIA-HMD — proteogenomic hotspot peptide detection
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \
@@ -34,7 +34,7 @@ From: rocker/r-ver:4.4.3
     exec bash /opt/pipeline/run.sh "$@"
 
 %help
-    DIANN paper pipeline: DIA-NN proteogenomic pipeline for detecting somatic
+    DIA-HMD: DIA-NN proteogenomic pipeline for detecting somatic
     mutation (hotspot) peptides from DIA mass spectrometry data.
 
     This container provides R and Python dependencies. DIA-NN itself is NOT

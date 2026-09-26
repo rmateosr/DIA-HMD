@@ -1,22 +1,22 @@
-# ABOUTME: Container image with R + Python deps for the DIANN paper pipeline.
+# ABOUTME: Container image with R + Python deps for DIA-HMD.
 # ABOUTME: Does NOT include DIA-NN — mount your DIA-NN binary or image at runtime.
 #
 # Build:
-#   docker build -t diann-pipeline .
+#   docker build -t dia-hmd .
 #
 # Run (mount your data and DIA-NN image):
 #   docker run --rm \
 #     -v /path/to/raw/files:/data/input \
 #     -v /path/to/output:/data/output \
 #     -v /path/to/diann-linux:/opt/diann/diann-linux \
-#     diann-pipeline \
+#     dia-hmd \
 #     --input /data/input --output /data/output \
 #     --diann /opt/diann/diann-linux --runtime native
 
 FROM rocker/r-ver:4.4.3
 
 LABEL maintainer="Raul N. Mateos"
-LABEL description="DIANN paper pipeline — proteogenomic hotspot peptide detection"
+LABEL description="DIA-HMD — proteogenomic hotspot peptide detection"
 
 # System deps for R packages (tidyverse needs libcurl, libxml2, etc.)
 RUN apt-get update && apt-get install -y --no-install-recommends \

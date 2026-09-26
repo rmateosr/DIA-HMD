@@ -1,9 +1,9 @@
 #!/bin/bash
-# ABOUTME: Installs R and Python dependencies for the DIANN paper pipeline.
+# ABOUTME: Installs R and Python dependencies for DIA-HMD.
 # ABOUTME: Run once before using the pipeline. Requires R >= 4.x and Python >= 3.8.
 set -euo pipefail
 
-echo "=== DIANN Paper Pipeline — Dependency Installer ==="
+echo "=== DIA-HMD — Dependency Installer ==="
 echo ""
 
 # --- Python packages ---

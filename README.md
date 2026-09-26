@@ -13,7 +13,7 @@ Dependencies are Python 3.8+ (pandas, pyarrow) and R 4.0+ (tidyverse, data.table
 RColorBrewer). With conda:
 
 ```bash
-conda env create -f environment.yml && conda activate diann-pipeline
+conda env create -f environment.yml && conda activate dia-hmd
 ```
 
 Otherwise `bash install_deps.sh` puts them into an environment you already have. `Dockerfile` and
@@ -24,7 +24,7 @@ DIA-NN 2.0.2 itself is not bundled. Take the Apptainer image from this repositor
 the native Linux binary from upstream:
 
 ```bash
-gh release download v1.0 --pattern 'diann-2.0.2.img' --dir .
+wget https://github.com/rmateosr/DIA-HMD/releases/download/v1.0/diann-2.0.2.img
 
 wget https://github.com/vdemichev/DiaNN/releases/download/2.0/DIA-NN-2.0.2-Academia-Linux.zip
 unzip DIA-NN-2.0.2-Academia-Linux.zip
@@ -90,6 +90,14 @@ DIA-NN's precursor matrix with the rejected variant cells emptied. The plots rea
 
 To configure by hand instead, edit `scripts/config.sh` and run `bash Complete_pipeline.sh` from
 `scripts/`.
+
+## Scoring against known mutations
+
+`--truth` takes a TSV with `Sample`, `Gene`, `Protein.Change` and `Detected.By.DIANN` columns —
+one row per mutation you already know is in a sample. With it, every call is reported as a true
+or false positive; without it that stage is skipped. `--sample-map` (`run`, `sample`) groups
+injections of the same sample, which is what `--min-replicates` counts over.
+`example/colo205_truth.tsv` and `example/colo205_sample_map.tsv` are worked ones.
 
 ## Citation
 

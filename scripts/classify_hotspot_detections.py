@@ -207,7 +207,7 @@ def main():
         "-t", "--truth", required=True,
         help="Ground-truth table: TSV with Sample, Gene, Protein.Change and "
              "Detected.By.DIANN columns. Required -- there is nothing to classify against "
-             "without it. See data/truth/ for the two published cohorts",
+             "without it. See example/colo205_truth.tsv for the format",
     )
     parser.add_argument(
         "-s", "--sample-map", default="",
