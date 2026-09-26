@@ -47,9 +47,9 @@ On a cluster the stages are submitted rather than run, so `run.sh` returns befor
 prints the copy command for afterwards.
 
 For an end-to-end test, two COLO205 injections are on Zenodo at
-[10.5281/zenodo.19436340](https://doi.org/10.5281/zenodo.19436340) (~12 GB each, too large for
-GitHub). [`example/README.md`](example/README.md) has the download and the run, plus a dependency
-check that needs no data at all.
+[10.5281/zenodo.19436340](https://doi.org/10.5281/zenodo.19436340) (~12 GB each).
+[`example/README.md`](example/README.md) has the download and the run, plus a dependency check
+that needs no data at all.
 
 ## Output
 

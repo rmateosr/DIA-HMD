@@ -1,6 +1,6 @@
 # Example Data
 
-Example DIA-MS input data is hosted on Zenodo because the files are too large for GitHub (~12 GB each).
+Example DIA-MS input data is hosted on Zenodo (~12 GB each).
 
 ## Download
 
